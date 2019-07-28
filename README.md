@@ -29,3 +29,47 @@ This idea also means, that some things that are not included in Java but turned 
   * No cycles, looping structures.
   * Built-in dependency injection/management through supplier parameters.
   * All exceptions are checked, including those in lambda expressions.
+
+## Syntax
+
+### Objects
+
+The most important building blocks of an Oscar software are Objects. Objects are analogous to Java Classes, except there is no inheritance, so calling them classes would be confusing.
+
+```oscar
+object Money(val amount: Integer, val currency: Currency) {
+   ...
+}
+```
+
+By default all `object`s are immutable, if that's not the case the object needs to be marked `mutable object...`. There are no visibility modifiers for objects, all objects are "public final" in the Java sense.
+
+All `object`s need a primary constructor that all other constructors need to refer to. If there are more to be done in the construction phase, the object may define a code block for the default constructor with:
+
+```oscar
+object Money(val amount: Integer, val currency: Currency) {
+   def Money() {
+      ...here the object values are already set...
+   }
+   ...
+}
+```
+
+There can be optional values in all parameter lists:
+
+```oscar
+object Money(val amount: Integer = 0, val currency: Currency) {
+   ...
+}
+```
+
+There can be secondary constructors with different signatures, note however, that because optional parameters are possible, signatures that just omit optional parameters are not possible. It is however possible to define "named" constructors, like this:
+
+```oscar
+object Money(val amount: Integer = 0, val currency: Currency) {
+   def Money.zeroDollars() {
+      return this(0, Dollar);
+   }
+   ...
+}
+```
