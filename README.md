@@ -7,6 +7,12 @@ Oscar is a statically typed object-inspired modern generic programming language.
 When Java came out in the 90's it brought a lot of revolutionary ideas to the mainstream development community. However, that was more than 20 years ago and there are a lot of lessons the communiy learned since then. Oscar is the Java syntax + all the experience applied without having to be backwards compatible with anything.
 
 Following idea underlies these changes: **There should be a *single* *correct* way to write things.**
+
+"*Single*" means to not have redundancies. There should not be multiple ways to iterate, multiple ways to instantiate an object, multiple ways to define objects or interfaces. In short, all idioms should be the same for all developers regardless of personal style.
+
+"*Correct*" means that things written should be unambiguous and do what readers would expect. Also, things that often lead to misunderstandings, failures or are often misused are consiered incorrect. Examples include inheritance, addition with overflow, etc.
+
+This idea also means, that some things that are not included in Java but turned out to have a correct way to do become a part of the language. This includes exceptions handling scenarios like rethrowing or handling.
  
  ## Differences to Java
  
