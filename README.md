@@ -68,8 +68,68 @@ There can be secondary constructors with different signatures, note however, tha
 ```oscar
 object Money(val amount: Integer = 0, val currency: Currency) {
    def Money.zeroDollars() {
-      return this(0, Dollar);
+      return this(0, Currency.Dollar());
    }
    ...
 }
 ```
+
+### Instance variables
+
+All parameters declared in the primary constructor are automatically instance variables too. Additional instance variables can be declared in the body of the `object` with the keywords `val` or `var`.
+
+Variables declared `val` are immutable, equivalent to "final" variables in Java. Note however that the referenced object itself may be mutable. Variables declared `var` are mutable variables, conceptually equal to "non-final" instance variables.
+
+```oscar
+object Money(val amount: Integer = 0, val currency: Currency) {
+   val cents: Integer = amount * 100;
+
+   def Money.zeroDollars() {
+      return this(0, Currency.Dollar());
+   }
+   ...
+}
+```
+
+Note that objects are immutable by default. Only `mutable object`s may use `var` declarations.
+
+### Interfaces
+
+### Delegation
+
+Objects may delegate the implementation of a certain interface to another object. For example:
+
+```oscar
+object Score(val player: Player, val points: Integer) implements Ordering by points {
+   ...
+}
+
+The `Ordering` equals the `Comparable` interface in Java, as it has one method to compare two objects of the same type. As `Integer implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An `object` can implement and delegate multiple interfaces, just as in Java:
+
+```oscar
+object Score(val player: Player, val points: Integer) implements
+      Ordering by points
+      Identity by player {
+   ...
+}
+
+An `Identity` defines the `equals()` method that all objects have in Java. The delegation does not have to go to a constructor parameter, it can be a custom object created just for this purpose.
+
+```oscar
+object Player(val firstName: String, val lastName: String) implements
+      Identity by AggregateIdentity(firstName, lastName)
+```
+
+In this case however there is no way to refer to the delegate itself from the body of the object. If that is needed, it has to be explicitly put into a variable:
+
+```oscar
+object Player(val firstName: String, val lastName: String) implements
+      Identity by identityDelegate
+   val identityDelegate: Identity = AggregateIdentity(firstName, lastName)
+```
+
+## Idioms
+
+Objects may not inherit from other objects. This also means there is no "superclass", no `Object` class that is the parent for all objects. The preferred method to compose different capabilities is to *delegate*.
+
+
