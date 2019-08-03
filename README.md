@@ -44,6 +44,8 @@ object Money(val amount: Integer, val currency: Currency) {
 
 By default all `object`s are immutable, if that's not the case the object needs to be marked `mutable object...`. There are no visibility modifiers for objects, all objects are "public final" in the Java sense.
 
+Objects can not be "abstract", since there is no inheritance.
+
 All `object`s need a primary constructor that all other constructors need to refer to. If there are more to be done in the construction phase, the object may define a code block for the default constructor with:
 
 ```oscar
@@ -94,6 +96,20 @@ object Money(val amount: Integer = 0, val currency: Currency) {
 Note that objects are immutable by default. Only `mutable object`s may use `var` declarations.
 
 ### Interfaces
+
+Interfaces are largerly the same as in Java. Interfaces may not have any instance variables, but they can have implemented methods. Implemented methods do not need the "default" keyword like in Java.
+
+```oscar
+interface Ordering<T> {
+   def lessThan(T other): Boolean;
+   
+   def equalTo(T other): Boolean;
+   
+   def greaterThan(T other): Boolean {
+      return !equalTo(other) && !lessThan(other);
+   }
+}
+```
 
 ### Delegation
 
