@@ -103,6 +103,7 @@ Objects may delegate the implementation of a certain interface to another object
 object Score(val player: Player, val points: Integer) implements Ordering by points {
    ...
 }
+```
 
 The `Ordering` equals the `Comparable` interface in Java, as it has one method to compare two objects of the same type. As `Integer implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An `object` can implement and delegate multiple interfaces, just as in Java:
 
@@ -112,6 +113,7 @@ object Score(val player: Player, val points: Integer) implements
       Identity by player {
    ...
 }
+```
 
 An `Identity` defines the `equals()` method that all objects have in Java. The delegation does not have to go to a constructor parameter, it can be a custom object created just for this purpose.
 
