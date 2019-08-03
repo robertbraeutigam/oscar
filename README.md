@@ -12,7 +12,7 @@ Following idea underlies these changes: **There should be a *single* *correct* w
 
 "*Correct*" means that things written should be unambiguous and do what readers would expect. Also, things that often lead to misunderstandings, failures or are often misused are consiered incorrect. Examples include inheritance, addition with overflow, etc.
 
-This idea also means, that some things that are not included in Java but turned out to have a correct way to do become a part of the language. This includes exceptions handling scenarios like rethrowing or handling.
+This idea also means, that some things that are not actually included in Java, but turned out to have a single correct way to do, become a part of Oscar. This includes exceptions handling scenarios like rethrowing or handling.
  
  ## Differences to Java
  
