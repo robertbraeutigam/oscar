@@ -4,28 +4,20 @@ Oscar is a statically typed object-inspired modern generic programming language.
 
 ## Rationale
 
-When Java came out in the 90's it brought a lot of revolutionary ideas to the mainstream development community. However, that was more than 20 years ago and there are a lot of lessons the communiy learned since then. Oscar is the Java syntax + all the experience applied without having to be backwards compatible with anything.
+When Java came out in the 90's it brought a lot of revolutionary ideas to the mainstream development community. However, that was more than 20 years ago and there are a lot of lessons the communiy learned since then. Oscar is the result of applying all this experience, starting from the Java language, but withou the need to be backwards compatible.
 
-Following idea underlies these changes: **There should be a *single* *correct* way to write things.**
-
-"*Single*" means to not have redundancies. There should not be multiple ways to iterate, multiple ways to instantiate an object, multiple ways to define objects or interfaces. In short, all idioms should be the same for all developers regardless of personal style.
-
-"*Correct*" means that things written should be unambiguous and do what readers would expect. Also, things that often lead to misunderstandings, failures or are often misused are consiered incorrect. Examples include inheritance, addition with overflow, etc.
-
-This idea also means, that some things that are not actually included in Java, but turned out to have a single correct way to do, become a part of Oscar. This includes exceptions handling scenarios like rethrowing or handling.
- 
  ## Differences to Java
  
- Following is an incomplete but representative list of differences how Oscar differs from Java:
+ Following is an incomplete but representative list of differences between Oscar and Java:
  
   * There is no `null`.
   * There are no static methods. No companion objects or similar built-in singletons.
   * There is no inheritance at all, only implementing interfaces is possible.
   * There are no mutable local variables or parameters, only instance variables can be mutated.
   * There are no blocking operations. It is not possible to block a thread in Oscar.
-  * No primitive values, everything is an `Object`.
-  * `Object` does not have any methods. No `equals()`, `hashCode()`, `toString()`.
-  * No `instanceof`, no reflection.
+  * No primitive values, everything is an object.
+  * Objects by default do not have any methods. No `equals()`, `hashCode()`, `toString()`.
+  * No `instanceof`, `getClass()`, no reflection.
   * No cycles, looping structures.
   * Built-in dependency injection/management through supplier parameters.
   * All exceptions are checked, including those in lambda expressions.
@@ -34,7 +26,7 @@ This idea also means, that some things that are not actually included in Java, b
 
 ### Objects
 
-The most important building blocks of an Oscar software are Objects. Objects are analogous to Java Classes, except there is no inheritance, so calling them classes would be confusing.
+The most important building blocks of an Oscar software are Objects. Objects are analogous to Java Classes, except there is no inheritance.
 
 ```oscar
 object Money(val amount: Integer, val currency: Currency) {
@@ -93,7 +85,7 @@ object Money(val amount: Integer = 0, val currency: Currency) {
 }
 ```
 
-Note that objects are immutable by default. Only `mutable object`s may use `var` declarations.
+Note that objects are immutable by default. Only `mutable object`s may use `var` declarations. Note also that immutable object may reference mutable objects, that does not make them mutable too.
 
 ### Interfaces
 
@@ -121,7 +113,7 @@ object Score(val player: Player, val points: Integer) implements Ordering by poi
 }
 ```
 
-The `Ordering` equals the `Comparable` interface in Java, as it has one method to compare two objects of the same type. As `Integer implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An `object` can implement and delegate multiple interfaces, just as in Java:
+The `Ordering` interface is similar to the `Comparable` interface in Java, as it compares two objects of the same type. As `Integer implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An `object` can implement and delegate multiple interfaces, just as in Java:
 
 ```oscar
 object Score(val player: Player, val points: Integer) implements
@@ -131,7 +123,7 @@ object Score(val player: Player, val points: Integer) implements
 }
 ```
 
-An `Identity` defines the `equals()` method that all objects have in Java. The delegation does not have to go to a constructor parameter, it can be a custom object created just for this purpose.
+An `Identity` defines the `identicalTo()` method that is similar to Java's "equals()". The delegation does not have to go to a constructor parameter, it can be a custom object created just for this purpose.
 
 ```oscar
 object Player(val firstName: String, val lastName: String) implements
