@@ -113,7 +113,7 @@ object Score(val player: Player, val points: Integer) implements Ordering by poi
 }
 ```
 
-The `Ordering` interface is similar to the `Comparable` interface in Java, as it compares two objects of the same type. As `Integer implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An `object` can implement and delegate multiple interfaces, just as in Java:
+The `Ordering` interface is similar to the `Comparable` interface in Java, as it compares two objects of the same type. As `Integer` implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An `object` can implement and delegate multiple interfaces, just as in Java:
 
 ```oscar
 object Score(val player: Player, val points: Integer) implements
@@ -138,8 +138,51 @@ object Player(val firstName: String, val lastName: String) implements
    val identityDelegate: Identity = AggregateIdentity(firstName, lastName)
 ```
 
+### Supplier Methods / Dependency Injection
+
+There is no "new" keyword in Oscar, objects are not instantiated directly. Instead objects get "supplier methods" injected for all the objects they need an instance of. For example: 
+
+```oscar
+object Player(val firstName: String, val lastName: String) implements
+      Identity by identityDelegate
+   val identityDelegate: Identity = AggregateIdentity(firstName, lastName)
+```
+
+In this example `AggreateIdentity` seems to be instantiated, but it is actually not, at least not directly. Instead the `AggregateIdentity` supplier method is *invoked*. This method gets actually *injected* to the `Player` object as a constructor parameter.
+
+So any calling code doing this:
+
+```oscar
+val player = Player("John", "Goodman");
+```
+
+is acutally implicitly supplying a constructor parameter `AggregateIdentity`. This can be visible if the code explicitly overrides the supplier method:
+
+```oscar
+val player = Player((firstName, lastName) -> AggregateIdentity("Jack", lastName), "John", "Goodman");
+```
+
+This enables changing the supplier method in the using class, including returning the same instance always (effectively creating a singleton instance of some object). Supplier methods don't have to return a new instance, they can have any logic of supplying an instance that is appropriate for the enclosing object.
+
+### Supplier Method Overloading
+
+Sometimes object may have two kinds of dependencies. One are collaborator objects that are not specific and not local to the object they are passed into, and other kinds of parameters (like values) that are expected to be different for different contexts. For example:
+
+```oscar
+object Account(val db: Database, val id: AccountId) {
+   ...
+}
+```
+
+In this case it is expected that the `db` dependency is some global instance, while `id` is specific to use. So some code might use `Account` like this:
+
+```oscar
+val newAccount = Account(AccountId("000111222"));
+```
+
+Since user code is not expected to know the details how the `Account` works, it is also should not be expected to know that it requires a `Database` even though it might "instantiate" an `Account`. In this case, the user code actually awaits a *supplier method* of signature `Account(id: AccountId)`, even if such a *constructor* is not actually defined in `Account`.
+
+...
+
 ## Idioms
-
-Objects may not inherit from other objects. This also means there is no "superclass", no `Object` class that is the parent for all objects. The preferred method to compose different capabilities is to *delegate*.
-
 
