@@ -6,8 +6,8 @@ Oscar is a statically typed object-inspired modern generic programming language.
 
 *Best practices and good design over features*.
 
-The main difference to other contemporary languages is that **oscar** is *opinionated*. While other languages
-concentrate on packing new features into the language irrespective of paradigms, in **oscar** the
+The main difference to other contemporary languages is that **Oscar** is *opinionated*. While other languages
+concentrate on packing new features into the language irrespective of paradigms, in **Oscar** the
 *paradigm* is the main value and only features that serve that paradigm are included.
 
 With that in mind, the goals can be summarized thusly:
@@ -22,15 +22,15 @@ With that in mind, the goals can be summarized thusly:
 Following is an incomplete but representative list of differences between Oscar and Java:
  
  * There is no `null`.
- * There are no static methods. No companion objects or similar built-in singletons.
+ * There are no static methods, no companion objects or similar built-in singletons.
  * There is no inheritance at all, only implementing interfaces is possible.
  * There are no mutable local variables or parameters, only instance variables can be mutated.
- * There are no blocking operations. It is not possible to block a thread in Oscar.
+ * There are no blocking operations. It is not possible to sleep, wait, synchronize or otherwise block a thread in Oscar.
  * No primitive values, everything is an object.
- * Objects by default do not have any methods. No `equals()`, `hashCode()`, `toString()`.
+ * Objects do not have any methods by default. No `equals()`, `hashCode()`, `toString()`.
  * No `instanceof`, `getClass()`, no reflection.
+ * No serialization.
  * No cycles, looping structures.
- * Built-in dependency injection/management through supplier parameters.
  * All exceptions are checked, including those in lambda expressions.
 
 ## Syntax
@@ -41,13 +41,17 @@ The most important building blocks of an Oscar software are Objects. Objects are
 is no inheritance.
 
 ```oscar
-object Money(let amount: Integer, let currency: Currency) {
+object Money(amount: Integer, currency: Currency) {
    ...
 }
 ```
 
-By default all `object`s are immutable, if that's not the case the object needs to be marked `mutable object...`. There
+By default all `object`s are immutable, meaning they can only contain immutable variables.
+If that's not the case the object needs to be marked `mutable object...`. The `mutable` modifier is
+also the only modifier possible for objects. There
 are no visibility modifiers for objects, all objects are "public final" in the Java sense.
+
+The parameters for objects are always immutable variables, essentially "private final" variables in the Java sense.
 
 Objects can not be "abstract", since there is no inheritance.
 
@@ -55,9 +59,9 @@ All `object`s need a primary constructor that all other constructors need to ref
 the construction phase, the object may define a code block for the default constructor with:
 
 ```oscar
-object Money(let amount: Integer, let currency: Currency) {
+object Money(amount: Integer, currency: Currency) {
    def Money() {
-      ...here the object values are already set...
+      ...here the object parameters are already set...
    }
    ...
 }
@@ -66,7 +70,7 @@ object Money(let amount: Integer, let currency: Currency) {
 There can be optional values in all parameter lists:
 
 ```oscar
-object Money(let amount: Integer = 0, let currency: Currency) {
+object Money(amount: Integer = 0, currency: Currency) {
    ...
 }
 ```
@@ -76,7 +80,7 @@ possible, signatures that just omit optional parameters are not possible. It is 
 constructors, like this:
 
 ```oscar
-object Money(let amount: Integer = 0, let currency: Currency) {
+object Money(amount: Integer = 0, currency: Currency) {
    def Money.zeroDollars() {
       return this(0, Currency.Dollar());
    }
@@ -84,33 +88,37 @@ object Money(let amount: Integer = 0, let currency: Currency) {
 }
 ```
 
+### Methods
+
+TODO
+
+### Lambda Expressions and Method References
+
 ### Instance variables
 
-All parameters declared in the primary constructor are automatically instance variables too. Additional instance
+All parameters declared in the primary constructor are automatically immutable instance "variables". Additional instance
 variables can be declared in the body of the `object` with the keywords `let` or `var`.
 
 Variables declared `let` are immutable, equivalent to "final" variables in Java. Note however that the referenced object
-itself may be mutable. Variables declared `var` are mutable variables, conceptually equal to "non-final" instance
+itself may be mutable. Variables declared `var` are mutable variables, conceptually equal to normal "non-final" instance
 variables.
 
 ```oscar
-object Money(let amount: Integer = 0, let currency: Currency) {
+object Money(amount: Integer = 0, currency: Currency) {
    let cents: Integer = amount * 100;
 
-   def Money.zeroDollars() {
-      return this(0, Currency.Dollar());
-   }
    ...
 }
 ```
 
 Note that objects are immutable by default. Only `mutable object`s may use `var` declarations. Note also that immutable
-object may reference mutable objects, that does not make them mutable too.
+objects may still reference mutable objects, that does not make them mutable.
 
 ### Interfaces
 
-Interfaces are largerly the same as in Java. Interfaces may not have any instance variables, but they can have
-implemented methods. Implemented methods do not need the "default" keyword like in Java.
+The purpose of interfaces is to describe a contract between the implementation and user code. For this
+they only need to contain the signatures of methods supported. Specifically, they can not contain
+default arguments nor default method implementations (use delegation for that).
 
 ```oscar
 interface Ordering<T> {
@@ -118,108 +126,99 @@ interface Ordering<T> {
    
    def equalTo(T other): Boolean;
    
-   def greaterThan(T other): Boolean {
-      return !equalTo(other) && !lessThan(other);
-   }
+   def greaterThan(T other): Boolean;
 }
 ```
+
+Interfaces may `extend` any number of other interfaces and objects may implement any number of
+interfaces, similarly to Java.
 
 ### Delegation
 
 Objects may delegate the implementation of a certain interface to another object. For example:
 
 ```oscar
-object Score(let player: Player, let points: Integer) implements Ordering by points {
-   ...
+object CachingConnection(delegate: Connection) implements Connection by delegate {
+   override def send(query: String): String {
+      // Cache response
+   }
 }
 ```
 
-The `Ordering` interface is similar to the `Comparable` interface in Java, as it compares two objects of the same type.
-As `Integer` implements an `Ordering` itself, all the ordering of the `Score` is delegated to the `points` variable. An
-`object` can implement and delegate multiple interfaces, just as in Java:
+The `CachingConnection` in this case delegates all `Connection` methods to the constructor
+parameter. Note that the object delegated to needs to implement the interface that is delegated.
+
+An object can of course implement and delegate multiple interfaces if need be. For example:
 
 ```oscar
-object Score(let player: Player, let points: Integer) implements
-      Ordering by points
-      Identity by player {
-   ...
+object CachingConnection(connection: Connection, cache: Cache) 
+      implements Connection by connection,
+      implements Cache by cache {
+
+   override def send(query: String): String {
+      return cache.read(name, connection::send(query));
+   }
 }
 ```
 
-An `Identity` defines the `identicalTo()` method that is similar to Java's "equals()". The delegation does not have to
-go to a constructor parameter, it can be a custom object created just for this purpose.
+In this case the `CachingConnection` is both a `Connection` and a `Cache`, and it delegates
+both duties to the respective objects.
+
+### Instantiating
+
+There is no "new" keyword in Oscar, objects are not instantiated directly. Instead instances of objects can be *acquired*
+through *supplier methods* (see next chapter). "Acquired" here means that the user code can not know whether the
+object was really instantiated or supplied via other means.
+
+Supplier methods are implicitly created whenever a type is referenced with a (potentially empty) parameter list.
+For example:
 
 ```oscar
-object Player(let firstName: String, let lastName: String) implements
-      Identity by AggregateIdentity(firstName, lastName)
+let player = Player("Jack", "Kirby");
 ```
 
-In this case however there is no way to refer to the delegate itself from the body of the object. If that is needed, it
-has to be explicitly put into a variable:
+`Player` might be either an interface or an object, and might or might not have a declared constructor with
+the given parameter list. The code here doesn't instantiate an object, but rather *declares a dependency* to
+acquiring an object with the given parameters!
+
+An object containing this code will essentially implicitly define an additional constructor argument to supply
+a method to produce a `Player` instance for the given parameters.
+
+Note that interfaces can't have default arguments nor default method implementations, therefore can not
+specify dependencies.
+
+### Supplier Methods
+
+As described above, objects do not instantiate other objects, but use *supplier methods* to acquire instances.
+This is normally transparent to the code itself. For example:
 
 ```oscar
-object Player(let firstName: String, let lastName: String) implements
-      Identity by identityDelegate
-   let identityDelegate: Identity = AggregateIdentity(firstName, lastName)
-```
-
-### Supplier Methods / Dependency Injection
-
-There is no "new" keyword in Oscar, objects are not instantiated directly. Instead objects get "supplier methods"
-injected for all the objects they need an instance of. For example: 
-
-```oscar
-object Player(let firstName: String, let lastName: String) implements
-      Identity by identityDelegate
-   let identityDelegate: Identity = AggregateIdentity(firstName, lastName)
-```
-
-In this example `AggreateIdentity` seems to be instantiated, but it is actually not, at least not directly. Instead the
-`AggregateIdentity` supplier method is *invoked*. This method gets actually *injected* to the `Player` object as a
-constructor parameter.
-
-So any calling code doing this:
-
-```oscar
-let player = Player("John", "Goodman");
-```
-
-is acutally implicitly supplying a constructor parameter `AggregateIdentity`. This can be visible if the code explicitly
-overrides the supplier method:
-
-```oscar
-let player = Player((firstName, lastName) -> AggregateIdentity("Jack", lastName), "John", "Goodman");
-```
-
-This enables changing the supplier method in the using class, including returning the same instance always (effectively
-creating a singleton instance of some object). Supplier methods don't have to return a new instance, they can have any
-logic of supplying an instance that is appropriate for the enclosing object.
-
-### Supplier Method Overloading
-
-Sometimes object may have two kinds of dependencies. One are collaborator objects that are not specific and not local to
-the object they are passed into, and other kinds of parameters (like values) that are expected to be different for
-different contexts. For example:
-
-```oscar
-object Account(let db: Database, let id: AccountId) {
-   ...
+object Game(firstName: String, lastName: String) {
+   let player = Player(firstName, lastName);
 }
 ```
 
-In this case it is expected that the `db` dependency is some global instance, while `id` is specific to use. So some
-code might use `Account` like this:
+In this example an instance of a `Player` is acquired, but there is no additional definition necessary.
+A supplier method with signature `Player(String, String)` will now be essentially an additional constructor
+argument to `Game`.
+
+If a constructor with that signature *actually* exists in `Player`, than it will be the default value
+for the supplier method, if the code acquiring the `Game` does not override it.
+
+Any supplier method can be overridden regardless whether they have default values, like this:
 
 ```oscar
-let newAccount = Account(AccountId("000111222"));
+let game = Game((firstName, lastName) -> Player("Jane", lastName), firstName, lastName);
 ```
 
-Since user code is not expected to know the details how the `Account` works, it is also should not be expected to know
-that it requires a `Database` even though it might "instantiate" an `Account`. In this case, the user code actually
-awaits a *supplier method* of signature `Account(id: AccountId)`, even if such a *constructor* is not actually defined
-in `Account`.
+The supplier methods precede the declared argument list, but are essentially parameters themselves. Here
+the overridden supplier method always acquires a `Player` using the first name "Jane". Of course
+the object containing this code also declares a dependency on `Player(String, String)`.
 
-...
+### Scratchpad
+
+ * Factories
+ * State machine (change object)?
 
 ## Idioms
 
