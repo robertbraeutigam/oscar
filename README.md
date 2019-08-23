@@ -4,9 +4,18 @@ Oscar is a statically typed object-inspired modern generic programming language.
 
 ## Rationale
 
-When Java came out in the 90's it brought a lot of revolutionary ideas to the mainstream development community. However,
-that was more than 20 years ago and there are a lot of lessons the communiy learned since then. Oscar is the result of
-applying all this experience, starting from the Java language, but withou the need to be backwards compatible.
+*Best practices and good design over features*.
+
+The main difference to other contemporary languages is that **oscar** is *opinionated*. While other languages
+concentrate on packing new features into the language irrespective of paradigms, in **oscar** the
+*paradigm* is the main value and only features that serve that paradigm are included.
+
+With that in mind, the goals can be summarized thusly:
+
+ * Opinionated. Using best practices should not be left up to the developer, but should flow naturally from the language.
+ * Maintainability. Only features that promote maintainability are included, features that are easy to
+   abuse or misuse are omitted.
+ * Familiarity to Java developers. No additional mathematical or theoretical training should be necessary to start.
 
 # Differences to Java
  
