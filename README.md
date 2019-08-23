@@ -32,7 +32,7 @@ The most important building blocks of an Oscar software are Objects. Objects are
 is no inheritance.
 
 ```oscar
-object Money(val amount: Integer, val currency: Currency) {
+object Money(let amount: Integer, let currency: Currency) {
    ...
 }
 ```
@@ -46,7 +46,7 @@ All `object`s need a primary constructor that all other constructors need to ref
 the construction phase, the object may define a code block for the default constructor with:
 
 ```oscar
-object Money(val amount: Integer, val currency: Currency) {
+object Money(let amount: Integer, let currency: Currency) {
    def Money() {
       ...here the object values are already set...
    }
@@ -57,7 +57,7 @@ object Money(val amount: Integer, val currency: Currency) {
 There can be optional values in all parameter lists:
 
 ```oscar
-object Money(val amount: Integer = 0, val currency: Currency) {
+object Money(let amount: Integer = 0, let currency: Currency) {
    ...
 }
 ```
@@ -67,7 +67,7 @@ possible, signatures that just omit optional parameters are not possible. It is 
 constructors, like this:
 
 ```oscar
-object Money(val amount: Integer = 0, val currency: Currency) {
+object Money(let amount: Integer = 0, let currency: Currency) {
    def Money.zeroDollars() {
       return this(0, Currency.Dollar());
    }
@@ -78,15 +78,15 @@ object Money(val amount: Integer = 0, val currency: Currency) {
 ### Instance variables
 
 All parameters declared in the primary constructor are automatically instance variables too. Additional instance
-variables can be declared in the body of the `object` with the keywords `val` or `var`.
+variables can be declared in the body of the `object` with the keywords `let` or `var`.
 
-Variables declared `val` are immutable, equivalent to "final" variables in Java. Note however that the referenced object
+Variables declared `let` are immutable, equivalent to "final" variables in Java. Note however that the referenced object
 itself may be mutable. Variables declared `var` are mutable variables, conceptually equal to "non-final" instance
 variables.
 
 ```oscar
-object Money(val amount: Integer = 0, val currency: Currency) {
-   val cents: Integer = amount * 100;
+object Money(let amount: Integer = 0, let currency: Currency) {
+   let cents: Integer = amount * 100;
 
    def Money.zeroDollars() {
       return this(0, Currency.Dollar());
@@ -120,7 +120,7 @@ interface Ordering<T> {
 Objects may delegate the implementation of a certain interface to another object. For example:
 
 ```oscar
-object Score(val player: Player, val points: Integer) implements Ordering by points {
+object Score(let player: Player, let points: Integer) implements Ordering by points {
    ...
 }
 ```
@@ -130,7 +130,7 @@ As `Integer` implements an `Ordering` itself, all the ordering of the `Score` is
 `object` can implement and delegate multiple interfaces, just as in Java:
 
 ```oscar
-object Score(val player: Player, val points: Integer) implements
+object Score(let player: Player, let points: Integer) implements
       Ordering by points
       Identity by player {
    ...
@@ -141,7 +141,7 @@ An `Identity` defines the `identicalTo()` method that is similar to Java's "equa
 go to a constructor parameter, it can be a custom object created just for this purpose.
 
 ```oscar
-object Player(val firstName: String, val lastName: String) implements
+object Player(let firstName: String, let lastName: String) implements
       Identity by AggregateIdentity(firstName, lastName)
 ```
 
@@ -149,9 +149,9 @@ In this case however there is no way to refer to the delegate itself from the bo
 has to be explicitly put into a variable:
 
 ```oscar
-object Player(val firstName: String, val lastName: String) implements
+object Player(let firstName: String, let lastName: String) implements
       Identity by identityDelegate
-   val identityDelegate: Identity = AggregateIdentity(firstName, lastName)
+   let identityDelegate: Identity = AggregateIdentity(firstName, lastName)
 ```
 
 ### Supplier Methods / Dependency Injection
@@ -160,9 +160,9 @@ There is no "new" keyword in Oscar, objects are not instantiated directly. Inste
 injected for all the objects they need an instance of. For example: 
 
 ```oscar
-object Player(val firstName: String, val lastName: String) implements
+object Player(let firstName: String, let lastName: String) implements
       Identity by identityDelegate
-   val identityDelegate: Identity = AggregateIdentity(firstName, lastName)
+   let identityDelegate: Identity = AggregateIdentity(firstName, lastName)
 ```
 
 In this example `AggreateIdentity` seems to be instantiated, but it is actually not, at least not directly. Instead the
@@ -172,14 +172,14 @@ constructor parameter.
 So any calling code doing this:
 
 ```oscar
-val player = Player("John", "Goodman");
+let player = Player("John", "Goodman");
 ```
 
 is acutally implicitly supplying a constructor parameter `AggregateIdentity`. This can be visible if the code explicitly
 overrides the supplier method:
 
 ```oscar
-val player = Player((firstName, lastName) -> AggregateIdentity("Jack", lastName), "John", "Goodman");
+let player = Player((firstName, lastName) -> AggregateIdentity("Jack", lastName), "John", "Goodman");
 ```
 
 This enables changing the supplier method in the using class, including returning the same instance always (effectively
@@ -193,7 +193,7 @@ the object they are passed into, and other kinds of parameters (like values) tha
 different contexts. For example:
 
 ```oscar
-object Account(val db: Database, val id: AccountId) {
+object Account(let db: Database, let id: AccountId) {
    ...
 }
 ```
@@ -202,7 +202,7 @@ In this case it is expected that the `db` dependency is some global instance, wh
 code might use `Account` like this:
 
 ```oscar
-val newAccount = Account(AccountId("000111222"));
+let newAccount = Account(AccountId("000111222"));
 ```
 
 Since user code is not expected to know the details how the `Account` works, it is also should not be expected to know
