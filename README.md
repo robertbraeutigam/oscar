@@ -46,7 +46,7 @@ object Money(amount: Integer, currency: Currency) {
 }
 ```
 
-By default all `object`s are immutable, meaning they can only contain immutable variables.
+By default all `object`s are shallowly immutable, meaning they can only contain immutable variables.
 If that's not the case the object needs to be marked `mutable object...`. The `mutable` modifier is
 also the only modifier possible for objects. There
 are no visibility modifiers for objects, all objects are "public final" in the Java sense.
@@ -90,9 +90,63 @@ object Money(amount: Integer = 0, currency: Currency) {
 
 ### Methods
 
-TODO
+There are three kinds of methods that can be defined in an object. Normal public methods,
+public methods that are the implementations of methods defined in some interface or interfaces,
+and private methods.
+
+Public methods are defined using the Java-style `public` keyword. For example:
+
+```oscar
+public order(amount: Integer) {
+   ...
+}
+```
+
+Parameters may have default values, similar to constructor parameters:
+
+```oscar
+public order(amount: Integer = 1) {
+   ...
+}
+```
+
+Methods that are supposed to be implementations of methods defined in an interface must use the
+keyword 'implement', like this:
+
+```oscar
+implement order(amount: Integer) {
+   ...
+}
+```
+
+`Implement`ed methods are always public.
+
+Methods may be "private" in which case they are only visible in the same class or inner classes.
+
+```oscar
+private order(amount: Integer) {
+   ...
+}
+```
+
+### Exception Handling
+
+Methods may declare exceptions, similar to what Java offers.
+
+```oscar
+def order(amount: Integer = 1) throws OutOfStockException {
+   if (stockAmount < amount) {
+      throw OutOfStockException(...);
+   }
+   ...
+}
+```
+
+Since there are no "unchecked" exceptions, all exceptions have to be always declared.
 
 ### Lambda Expressions and Method References
+
+TODO
 
 ### Instance variables
 
@@ -122,11 +176,11 @@ default arguments nor default method implementations (use delegation for that).
 
 ```oscar
 interface Ordering<T> {
-   def lessThan(T other): Boolean;
+   lessThan(T other): Boolean;
    
-   def equalTo(T other): Boolean;
+   equalTo(T other): Boolean;
    
-   def greaterThan(T other): Boolean;
+   greaterThan(T other): Boolean;
 }
 ```
 
@@ -162,7 +216,7 @@ object CachingConnection(connection: Connection, cache: Cache)
 ```
 
 In this case the `CachingConnection` is both a `Connection` and a `Cache`, and it delegates
-both duties to the respective objects.
+both duties to the respective objects. The overridden functionality connects the two parts.
 
 ### Instantiating
 
@@ -213,7 +267,7 @@ let game = Game((firstName, lastName) -> Player("Jane", lastName), firstName, la
 
 The supplier methods precede the declared argument list, but are essentially parameters themselves. Here
 the overridden supplier method always acquires a `Player` using the first name "Jane". Of course
-the object containing this code also declares a dependency on `Player(String, String)`.
+the object containing this code *also* declares a dependency on `Player(String, String)`.
 
 ### Scratchpad
 
