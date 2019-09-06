@@ -12,10 +12,10 @@ concentrate on packing new features into the language irrespective of paradigms,
 
 With that in mind, the goals can be summarized thusly:
 
- * Opinionated. Using best practices should not be left up to the developer, but should flow naturally from the language.
  * Maintainability. Only features that promote maintainability are included, features that are easy to
    abuse or misuse are omitted.
  * Familiarity to Java developers. No additional mathematical or theoretical training should be necessary to start.
+ * Opinionated. Using best practices should not be left up to the developer, but should flow naturally from the language.
 
 # Differences to Java
  
@@ -134,7 +134,7 @@ private order(amount: Integer) {
 Methods may declare exceptions, similar to what Java offers.
 
 ```oscar
-def order(amount: Integer = 1) throws OutOfStockException {
+public order(amount: Integer = 1) throws OutOfStockException {
    if (stockAmount < amount) {
       throw OutOfStockException(...);
    }
@@ -193,14 +193,15 @@ Objects may delegate the implementation of a certain interface to another object
 
 ```oscar
 object CachingConnection(delegate: Connection) implements Connection by delegate {
-   override def send(query: String): String {
+   implement send(query: String): String {
       // Cache response
    }
 }
 ```
 
 The `CachingConnection` in this case delegates all `Connection` methods to the constructor
-parameter. Note that the object delegated to needs to implement the interface that is delegated.
+parameter, except `send()` which is explicitly implemented.
+Note that the object delegated to needs to implement the interface that is delegated.
 
 An object can of course implement and delegate multiple interfaces if need be. For example:
 
@@ -209,7 +210,7 @@ object CachingConnection(connection: Connection, cache: Cache)
       implements Connection by connection,
       implements Cache by cache {
 
-   override def send(query: String): String {
+   implement send(query: String): String {
       return cache.read(name, connection::send(query));
    }
 }
