@@ -232,15 +232,12 @@ For example:
 let player = Player("Jack", "Kirby");
 ```
 
-`Player` might be either an interface or an object, and might or might not have a declared constructor with
+`Player` must be an object, which might or might not have a declared constructor with
 the given parameter list. The code here doesn't instantiate an object, but rather *declares a dependency* to
 acquiring an object with the given parameters!
 
 An object containing this code will essentially implicitly define an additional constructor argument to supply
 a method to produce a `Player` instance for the given parameters.
-
-Note that interfaces can't have default arguments nor default method implementations, therefore can not
-specify dependencies.
 
 ### Supplier Methods
 
@@ -255,7 +252,7 @@ object Game(firstName: String, lastName: String) {
 
 In this example an instance of a `Player` is acquired, but there is no additional definition necessary.
 A supplier method with signature `Player(String, String)` will now be essentially an additional constructor
-argument to `Game`.
+argument to `Game`. Note however, that the object `Player` needs to be accessible, i.e. imported.
 
 If a constructor with that signature *actually* exists in `Player`, than it will be the default value
 for the supplier method, if the code acquiring the `Game` does not override it.
