@@ -280,10 +280,10 @@ both duties to the respective objects. The overridden functionality connects the
 ### Instantiating
 
 There is no "new" keyword in Oscar, objects are not instantiated directly. Instead instances of objects can be *acquired*
-through *supplier methods* (see next chapter). "Acquired" here means that the user code can not know whether the
+through *supplier functions* (see next chapter). "Acquired" here means that the user code can not know whether the
 object was really instantiated or supplied via other means.
 
-Supplier methods are implicitly created whenever a type is referenced with a (potentially empty) parameter list.
+Supplier functions are implicitly created whenever a type is referenced with a (potentially empty) parameter list.
 For example:
 
 ```oscar
@@ -292,14 +292,14 @@ let player = Player("Jack", "Kirby");
 
 `Player` must be an object, which might or might not have a declared constructor with
 the given parameter list. The code here doesn't instantiate an object, but rather *declares a dependency* to
-acquiring an object with the given parameters!
+an object to be acquired with the given parameters!
 
-An object containing this code will essentially implicitly define an additional constructor argument to supply
+An object containing this code will implicitly define an additional constructor argument to supply
 a method to produce a `Player` instance for the given parameters.
 
-### Supplier Methods
+### Supplier Functions
 
-As described above, objects do not instantiate other objects, but use *supplier methods* to acquire instances.
+As described above, objects do not instantiate other objects, but use *supplier functions* to acquire instances.
 This is normally transparent to the code itself. For example:
 
 ```oscar
@@ -309,23 +309,25 @@ object Game(firstName: String, lastName: String) {
 ```
 
 In this example an instance of a `Player` is acquired, but there is no additional definition necessary.
-A supplier method with signature `Player(String, String)` will now be essentially an additional constructor
+A supplier function with signature `Player(String, String)` will now be an additional constructor
 argument to `Game`. Note however, that the object `Player` needs to be accessible, i.e. imported.
 
 If a constructor with that signature *actually* exists in `Player`, than it will be the default value
-for the supplier method, if the code acquiring the `Game` does not override it.
+for the supplier function, if the code acquiring the `Game` does not override it.
 
-Any supplier method can be overridden regardless whether they have default values, like this:
+Any supplier function can be overridden regardless whether they have default values, like this:
 
 ```oscar
 let game = Game((firstName, lastName) -> Player("Jane", lastName), firstName, lastName);
 ```
 
-The supplier methods precede the declared argument list, but are essentially parameters themselves. Here
-the overridden supplier method always acquires a `Player` using the first name "Jane". Of course
+The supplier functions precede the declared argument list, but are parameters themselves. Here
+the overridden supplier function always acquires a `Player` using the first name "Jane". Of course
 the object containing this code *also* declares a dependency on `Player(String, String)`.
 
 ### Generics
+
+TODO
 
 ### Threading and Parallelism
 
@@ -361,18 +363,11 @@ is satisfied:
 
 ```oscar
 statement1();
-wait {
-   return condition2();
-}
+wait condition2();
 statement3();
 ```
 
 Here `statement3()` will only be executed if the `condition2()` method returns true.
-
-### Scratchpad
-
- * Factories
- * State machine (change object)?
 
 ## Idioms
 
