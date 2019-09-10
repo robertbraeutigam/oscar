@@ -367,7 +367,8 @@ wait condition2();
 statement3();
 ```
 
-Here `statement3()` will only be executed if the `condition2()` method returns true.
+Here `statement3()` will only be executed if the `condition2()` method returns true. The `wait` condition
+will be evaluated after every call to the object where the `wait` is in, until it returns true.
 
 ## Idioms
 
