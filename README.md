@@ -60,7 +60,7 @@ the construction phase, the object may define a code block for the default const
 
 ```oscar
 object Money(amount: Integer, currency: Currency) {
-   def Money() {
+   Money() {
       ...here the object parameters are already set...
    }
    ...
@@ -81,7 +81,7 @@ constructors, like this:
 
 ```oscar
 object Money(amount: Integer = 0, currency: Currency) {
-   def Money.zeroDollars() {
+   Money.zeroDollars() {
       return this(0, Currency.Dollar());
    }
    ...
@@ -144,9 +144,67 @@ public order(amount: Integer = 1) throws OutOfStockException {
 
 Since there are no "unchecked" exceptions, all exceptions have to be always declared.
 
+It is worth noting, that exceptions should be used sparingly and only to indicate
+programming errors and exceptional states.
+
 ### Lambda Expressions and Method References
 
-TODO
+Lambda expressions are similar in syntax to Java, but are a bit different semantically. Lambdas are
+written as:
+
+```oscar
+(a, b) -> a+b
+```
+
+With parameters left, then a `->` symbol, then the expression or code body on the right. However, lambdas are not anonymous
+implementations of any interface with a single method. Lambdas are *always* an implementation of the
+special `Function` interface.
+
+The `Function` interface is special for three reasons. One, is that instead of this:
+
+```oscar
+public addTwoNumbers(operation: Function<Integer, Integer, Integer>): Integer {
+   ...
+}
+```
+
+It can be specified using a function type literal like this:
+
+```oscar
+public addTwoNumbers(operation: (Integer, Integer) -> Integer): Integer {
+   ...
+}
+```
+
+Second, it can be called without specifying a method. I.e.:
+
+```oscar
+public addTwoNumbers(operation: (Integer, Integer) -> Integer): Integer {
+   return operation(5);
+}
+```
+
+Third, that `Function`s always declare all exceptions thrown in their body at their call site. For example:
+
+```oscar
+public addTwoNumbers((a, b) -> throw IllegalArgumentException());
+```
+
+will result in a compile error, because `addTwoNumbers` does not declare `IllegalArgumentException` to be thrown,
+but the invocation of `operation` does throw `IllegalArgumentException`.
+
+The method can not hard-code the `IllegalArgumentException` because it is only thrown in that specific call, 
+not all calls, furthermore any number of exceptions might be thrown in any call. To mitigate this the method
+has to declare that it re-throws all potential exceptions of the given function. This is done this way:
+
+```oscar
+public addTwoNumbers(operation: (Integer, Integer) -> Integer): Integer
+      throws allof operation {
+   ...
+}
+```
+
+This has to be done always when the method itself doesn't handle the exceptions.
 
 ### Instance variables
 
@@ -266,6 +324,50 @@ let game = Game((firstName, lastName) -> Player("Jane", lastName), firstName, la
 The supplier methods precede the declared argument list, but are essentially parameters themselves. Here
 the overridden supplier method always acquires a `Player` using the first name "Jane". Of course
 the object containing this code *also* declares a dependency on `Player(String, String)`.
+
+### Generics
+
+### Threading and Parallelism
+
+In **Oscar** there is no direct way to influence threading and there is no abstraction available for threads,
+fibers, continuations or similar constructs. A code sequence is always executed sequentially in time:
+
+```oscar
+statement1();
+statement2();
+statement3();
+```
+
+`statement2()` will always execute *after* `statement1()`, and `statement3()` will always execute
+after `statement2()`. However, these statements will never *block* a physical (operating system) thread,
+even if `statement1()` is `sleep()`.
+
+**Oscar** will automatically manage these calls, take care of asynchronous calls, wait for data to be available
+and schedule it to some physical thread. Therefore all code will look like it blocks, but it never will.
+
+To indicate that a statement *shouldn't* wait for a given block of code the keyword `parallel` should be used:
+
+```oscar
+statement1();
+parallel {
+   statement2();
+}
+statement3();
+```
+
+In this case `statement3()` will not wait for `statement2()` to finish. The counterpart of `parallel` is
+the `wait` keyword. Statements after the `wait` keyword will only execute if the condition given to wait
+is satisfied:
+
+```oscar
+statement1();
+wait {
+   return condition2();
+}
+statement3();
+```
+
+Here `statement3()` will only be executed if the `condition2()` method returns true.
 
 ### Scratchpad
 
