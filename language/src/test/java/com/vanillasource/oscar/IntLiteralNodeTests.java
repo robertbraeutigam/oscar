@@ -1,15 +1,15 @@
 package com.vanillasource.oscar;
 
+import org.testng.annotations.Test;
 import com.oracle.truffle.api.Truffle;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
+@Test
 public final class IntLiteralNodeTests {
-   @Test
    public void testReturnsTheLiteral() {
       int result = (int) execute(new IntLiteralNode(12));
 
-      assertEquals(12, result);
+      assertEquals(result, 12);
    }
 
    private Object execute(IntLiteralNode node) {
