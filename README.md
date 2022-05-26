@@ -1,6 +1,6 @@
 # The Oscar Programming Language
 
-Oscar is a statically typed object-inspired modern generic programming language.
+Oscar is a statically typed object-orientation and functional-programming fusioning modern generic programming language.
 
 ## Rationale
 
@@ -24,14 +24,13 @@ Following is an incomplete but representative list of differences between Oscar 
  * There is no `null`.
  * There are no static methods, no companion objects or similar built-in singletons.
  * There is no inheritance at all, only implementing interfaces is possible.
- * There are no mutable local variables or parameters, only instance variables can be mutated.
- * There are no blocking operations. It is not possible to sleep, wait, synchronize or otherwise block a thread in Oscar.
+ * Reduced mutability. There are no mutable local variables or parameters, only instance variables can be mutated, occasionally.
+ * There are no blocking operations. It is not possible to sleep, wait, synchronize or otherwise block a (system) thread in Oscar.
  * No primitive values, everything is an object.
  * Objects do not have any methods by default. No `equals()`, `hashCode()`, `toString()`.
  * No `instanceof`, `getClass()`, no reflection.
  * No serialization.
  * No cycles, looping structures.
- * All exceptions are checked, including those in lambda expressions.
 
 ## Syntax
 
@@ -46,26 +45,16 @@ object Money(amount: Integer, currency: Currency) {
 }
 ```
 
-By default all `object`s are shallowly immutable, meaning they can only contain immutable variables.
-If that's not the case the object needs to be marked `mutable object...`. The `mutable` modifier is
-also the only modifier possible for objects. There
-are no visibility modifiers for objects, all objects are "public final" in the Java sense.
+There are no visibility modifiers for objects, all objects are "public final" in the Java sense.
 
 The parameters for objects are always immutable variables, essentially "private final" variables in the Java sense.
+Mutability is realized through a different mechanism described in later chapters. For now, assume all objects
+are immutable.
 
 Objects can not be "abstract", since there is no inheritance.
 
-All `object`s need a primary constructor that all other constructors need to refer to. If there are more to be done in
-the construction phase, the object may define a code block for the default constructor with:
-
-```oscar
-object Money(amount: Integer, currency: Currency) {
-   Money() {
-      ...here the object parameters are already set...
-   }
-   ...
-}
-```
+It is not possible to define additional "statements" to be executed during the construction
+of an object. The constructor should only set the initial state of the object.
 
 There can be optional values in all parameter lists:
 
@@ -81,42 +70,37 @@ constructors, like this:
 
 ```oscar
 object Money(amount: Integer = 0, currency: Currency) {
-   Money.zeroDollars() {
-      return this(0, Currency.Dollar());
-   }
+   Money.zeroDollars() = Money(0, Currency.Dollar())
    ...
 }
 ```
 
-### Methods
+### Methods / Functions
 
-There are three kinds of methods that can be defined in an object. Normal public methods,
+Methods in Oscar are actually functions, since objects are immutable. Because they are functions,
+they always have a return value and are implemented not by statements, but by an expression.
+
+There are three kinds of methods that can be defined by an object. Normal public methods,
 public methods that are the implementations of methods defined in some interface or interfaces,
 and private methods.
 
 Public methods are defined using the Java-style `public` keyword. For example:
 
 ```oscar
-public order(amount: Integer) {
-   ...
-}
+fun order(amount: Integer) = ...
 ```
 
 Parameters may have default values, similar to constructor parameters:
 
 ```oscar
-public order(amount: Integer = 1) {
-   ...
-}
+fun order(amount: Integer = 1) = ...
 ```
 
 Methods that are supposed to be implementations of methods defined in an interface must use the
 keyword 'implement', like this:
 
 ```oscar
-implement order(amount: Integer) {
-   ...
-}
+implement fun order(amount: Integer) = ...
 ```
 
 `Implement`ed methods are always public.
@@ -124,9 +108,7 @@ implement order(amount: Integer) {
 Methods may be "private" in which case they are only visible in the same class or inner classes.
 
 ```oscar
-private order(amount: Integer) {
-   ...
-}
+private fun order(amount: Integer) = ...
 ```
 
 ### Exception Handling
@@ -205,6 +187,8 @@ public addTwoNumbers(operation: (Integer, Integer) -> Integer): Integer
 ```
 
 This has to be done always when the method itself doesn't handle the exceptions.
+
+TODO: this can not be stored in 'var's, because the the type needs to be statically known
 
 ### Instance variables
 
@@ -327,7 +311,7 @@ the object containing this code *also* declares a dependency on `Player(String, 
 
 ### Generics
 
-TODO
+
 
 ### Threading and Parallelism
 
