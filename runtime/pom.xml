@@ -17,6 +17,32 @@
       <graalvm.version>22.1.0</graalvm.version>
    </properties>
 
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>shade</goal>
+                  </goals>
+                  <configuration>
+                     <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                           <mainClass>com.vanillasource.oscar.runtime.Runtime</mainClass>
+                        </transformer>
+                     </transformers>
+                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
    <dependencies>
       <dependency>
          <groupId>org.graalvm.truffle</groupId>
