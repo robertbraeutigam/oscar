@@ -1,0 +1,167 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.vanillasource.oscar</groupId>
+   <artifactId>oscar</artifactId>
+   <packaging>pom</packaging>
+   <version>1.0.0-SNAPSHOT</version>
+   <name>Oscar</name>
+   <description>The Oscar Programming Language</description>
+   <url>https://github.com/vanillasource/oscar</url>
+
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   </properties>
+
+   <modules>
+      <module>compiler</module>
+      <module>runtime</module>
+   </modules>
+
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License v3</name>
+         <url>http://www.gnu.org/licenses/lgpl.html</url>
+      </license>
+   </licenses>
+
+   <developers>
+      <developer>
+         <name>Róbert Bräutigam</name>
+         <email>brautigam.robert.gyula@gmail.com</email>
+      </developer>
+   </developers>
+
+   <scm>
+      <connection>scm:git:git@github.com:vanillasource/oscar.git</connection>
+      <developerConnection>scm:git:git@github.com:vanillasource/oscar.git</developerConnection>
+      <url>git@github.com:vanillasource/oscar.git</url>
+     <tag>HEAD</tag>
+   </scm>
+
+   <distributionManagement>
+      <repository>
+         <id>ossrh</id>
+         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+   </distributionManagement>   
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.0</version>
+            <configuration>
+               <source>17</source>
+               <target>17</target>
+               <compilerArgument>-Xlint:unchecked,deprecation</compilerArgument>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M6</version>
+            <configuration>
+               <argLine>
+                  --add-exports org.graalvm.truffle/com.oracle.truffle.api.nodes=ALL-UNNAMED
+                  --add-exports org.graalvm.truffle/com.oracle.truffle.api=ALL-UNNAMED
+                  --add-exports org.graalvm.truffle/com.oracle.truffle.api.dsl=ALL-UNNAMED
+               </argLine>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>surefire-test</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <includes>
+                        <include>**/*Tests.java</include>
+                     </includes>
+                     <parallel>tests</parallel>
+                     <threadCount>1</threadCount>
+                     <skip>false</skip>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.testng</groupId>
+         <artifactId>testng</artifactId>
+         <version>7.1.0</version>
+         <type>jar</type>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.mockito</groupId>
+         <artifactId>mockito-all</artifactId>
+         <version>1.9.5</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <profiles>
+      <profile> 
+         <id>release</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-jar-plugin</artifactId>
+                  <version>2.5</version>
+                  <executions>
+                     <execution>
+                        <id>empty-javadoc-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                           <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                           <classifier>javadoc</classifier>
+                           <includes>
+                              <include>**/*.html</include>
+                           </includes>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-source-plugin</artifactId>
+                  <version>2.2.1</version>
+                  <executions>
+                     <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                           <goal>jar-no-fork</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <version>1.5</version>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+
+</project>
+
