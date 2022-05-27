@@ -1,4 +1,4 @@
-package com.vanillasource.oscar;
+package com.vanillasource.oscar.runtime;
 
 import org.testng.annotations.Test;
 import com.oracle.truffle.api.Truffle;

@@ -1,4 +1,4 @@
-package com.vanillasource.oscar;
+package com.vanillasource.oscar.runtime;
 
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.frame.VirtualFrame;
