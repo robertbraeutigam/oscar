@@ -1,7 +1,8 @@
 #!/bin/sh
 
 $JAVA_HOME/bin/java \
-   --add-exports org.graalvm.truffle/com.oracle.truffle.api.nodes=ALL-UNNAMED \
-   --add-exports org.graalvm.truffle/com.oracle.truffle.api=ALL-UNNAMED \
-   --add-exports org.graalvm.truffle/com.oracle.truffle.api.dsl=ALL-UNNAMED \
    -jar target/oscar-runtime*.jar $*
+
+#   --add-exports org.graalvm.truffle/com.oracle.truffle.api.nodes=ALL-UNNAMED \
+#   --add-exports org.graalvm.truffle/com.oracle.truffle.api=ALL-UNNAMED \
+#   --add-exports org.graalvm.truffle/com.oracle.truffle.api.dsl=ALL-UNNAMED \

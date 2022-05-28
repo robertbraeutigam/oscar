@@ -21,6 +21,51 @@
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.0</version>
+            <configuration>
+               <source>17</source>
+               <target>17</target>
+               <annotationProcessorPaths>
+                  <annotationProcessorPath>
+                     <groupId>org.graalvm.truffle</groupId>
+                     <artifactId>truffle-dsl-processor</artifactId>
+                     <version>${graalvm.version}</version>
+                  </annotationProcessorPath>
+               </annotationProcessorPaths>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M6</version>
+            <configuration>
+               <argLine>
+                  --add-exports org.graalvm.truffle/com.oracle.truffle.api.nodes=ALL-UNNAMED
+                  --add-exports org.graalvm.truffle/com.oracle.truffle.api=ALL-UNNAMED
+                  --add-exports org.graalvm.truffle/com.oracle.truffle.api.dsl=ALL-UNNAMED
+               </argLine>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>surefire-test</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <includes>
+                        <include>**/*Tests.java</include>
+                     </includes>
+                     <parallel>tests</parallel>
+                     <threadCount>1</threadCount>
+                     <skip>false</skip>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
             <version>3.3.0</version>
             <executions>
@@ -34,6 +79,7 @@
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                            <mainClass>com.vanillasource.oscar.runtime.Runtime</mainClass>
                         </transformer>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                      </transformers>
                      <createDependencyReducedPom>false</createDependencyReducedPom>
                   </configuration>
@@ -47,11 +93,6 @@
       <dependency>
          <groupId>org.graalvm.truffle</groupId>
          <artifactId>truffle-api</artifactId>
-         <version>${graalvm.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.graalvm.truffle</groupId>
-         <artifactId>truffle-dsl-processor</artifactId>
          <version>${graalvm.version}</version>
       </dependency>
    </dependencies>
