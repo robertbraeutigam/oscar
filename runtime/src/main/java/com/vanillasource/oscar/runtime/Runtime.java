@@ -1,10 +1,10 @@
 package com.vanillasource.oscar.runtime;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
+import com.oracle.truffle.api.Truffle;
 import java.io.IOException;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.Source;
 
 public final class Runtime {
    private final String objectName;
@@ -27,8 +27,13 @@ public final class Runtime {
          error("os: can't find object '"+objectName+"'");
       }
       try {
-         Value value = Context.create().eval(Source.newBuilder("osc", objectFile).build());
-         System.exit(value.asInt());
+         try (
+            DataInputStream in = new DataInputStream(new FileInputStream(objectFile));
+         ) {
+            IntLiteralNode node = new IntLiteralNode(in.readInt());
+            Object value = Truffle.getRuntime().createDirectCallNode(new OscarRootNode(node).getCallTarget()).call();
+            System.exit((Integer) value);
+         }
       } catch (IOException e) {
          error("oc: error while executing '"+objectName+"': "+e.getMessage());
       }
