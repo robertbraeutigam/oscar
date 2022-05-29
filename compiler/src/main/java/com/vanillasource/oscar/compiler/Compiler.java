@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.DataOutputStream;
+import org.typemeta.funcj.parser.Input;
 
 public final class Compiler {
    private final File sourceFile;
@@ -33,14 +34,23 @@ public final class Compiler {
 
    public void compile() {
       try {
+         StringBuilder sourceCode = new StringBuilder();
          try (
             BufferedReader in = new BufferedReader(new FileReader(sourceFile));
-            DataOutputStream out = new DataOutputStream(new FileOutputStream(sourceFile.getName()+"c"));
          ) {
-            String content = in.readLine();
-            out.writeInt(Integer.valueOf(content));
+            String content;
+            while ((content = in.readLine()) != null) {
+               sourceCode.append(content);
+            }
          }
          
+         try (
+            DataOutputStream out = new DataOutputStream(new FileOutputStream(sourceFile.getName()+"c"));
+         ) {
+            OscarObject.PARSER.parse(Input.of(sourceCode.toString()))
+               .getOrThrow()
+               .compileTo(out);
+         }
       } catch (IOException e) {
          error("osc: can't read file '"+sourceFile.getName()+"': "+e.getMessage());
       } catch (Exception e) {

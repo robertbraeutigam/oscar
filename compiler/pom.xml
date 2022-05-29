@@ -40,6 +40,11 @@
    </build>
 
    <dependencies>
+      <dependency>
+         <groupId>org.typemeta</groupId>
+         <artifactId>funcj-parser</artifactId>
+         <version>0.6.16</version>
+      </dependency>
    </dependencies>
 </project>
 
