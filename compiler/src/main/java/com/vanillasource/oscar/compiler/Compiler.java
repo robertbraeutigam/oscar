@@ -43,13 +43,13 @@ public final class Compiler {
             sourceCode.append(content+"\n");
          }
       }
-      compile(Input.of(sourceCode.toString()),
+      compile(new StringInput(sourceFile.getName(), sourceCode.toString()),
             new DataOutputStream(new FileOutputStream(sourceFile.getName()+"c")),
             new StdOutMessages());
    }
 
    public void compile(String source, DataOutput output, CompilerMessages messages) {
-      compile(Input.of(source), output, messages);
+      compile(new StringInput("<stdin>", source), output, messages);
    }
 
    private void compile(Input<Chr> input, DataOutput output, CompilerMessages messages) {
