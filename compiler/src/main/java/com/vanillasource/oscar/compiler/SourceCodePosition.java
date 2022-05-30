@@ -2,22 +2,27 @@ package com.vanillasource.oscar.compiler;
 
 public final class SourceCodePosition {
    private final String sourceName;
-   private boolean previousCharacterWasCarriageReturn = false;
-   private int line = 1;
-   private int col = 1;
+   private final int line;
+   private final int col;
+   private final boolean previousCharacterWasCarriageReturn;
 
-   public SourceCodePosition(String sourceName) {
+   private SourceCodePosition(String sourceName, int line, int col, boolean previousCharacterWasCarriageReturn) {
       this.sourceName = sourceName;
+      this.line = line;
+      this.col = col;
+      this.previousCharacterWasCarriageReturn = previousCharacterWasCarriageReturn;
    }
 
-   public void advanceWith(char c) {
+   public SourceCodePosition(String sourceName) {
+      this(sourceName, 1, 1, false);
+   }
+
+   public SourceCodePosition advanceWith(char c) {
       if (c=='\n' && !previousCharacterWasCarriageReturn ||
           c=='\r' || c=='\u0085' || c=='\u2028' || c=='\u2029') {
-         line++;
-         col = 1;
-         previousCharacterWasCarriageReturn = c=='\r';
+         return new SourceCodePosition(sourceName, line+1, 1, c=='\r');
       } else {
-         col++;
+         return new SourceCodePosition(sourceName, line, col+1, false);
       }
    }
 

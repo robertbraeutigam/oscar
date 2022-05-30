@@ -1,16 +1,20 @@
 package com.vanillasource.oscar.compiler;
 
-import org.typemeta.funcj.data.Chr;
 import org.typemeta.funcj.parser.Input;
 
-public final class StringInput implements Input<Chr> {
+public final class StringInput implements Input<Character> {
    private final SourceCodePosition position;
    private final String content;
-   private int index = 0;
+   private final int index;
+
+   private StringInput(SourceCodePosition position, String content, int index) {
+      this.position = position;
+      this.content = content;
+      this.index = index;
+   }
 
    public StringInput(String source, String content) {
-      this.position = new SourceCodePosition(source);
-      this.content = content;
+      this(new SourceCodePosition(source), content, 0);
    }
 
    @Override
@@ -19,15 +23,13 @@ public final class StringInput implements Input<Chr> {
    }
 
    @Override
-   public Chr get() {
-      return Chr.valueOf(content.charAt(index));
+   public Character get() {
+      return content.charAt(index);
    }
 
    @Override
-   public Input<Chr> next() {
-      position.advanceWith(content.charAt(index));
-      index++;
-      return this;
+   public Input<Character> next() {
+      return new StringInput(position.advanceWith(content.charAt(index)), content, index+1);
    }
 
    @Override
