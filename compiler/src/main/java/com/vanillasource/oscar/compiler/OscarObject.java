@@ -24,6 +24,7 @@ public final class OscarObject {
 
    public void compileTo(DataOutput out) throws IOException {
       out.writeUTF(objectName);
+      out.writeInt(methods.size());
       for (OscarMethod method: methods) {
          method.compileTo(out);
       }

@@ -30,8 +30,8 @@ public final class Runtime {
          try (
             DataInputStream in = new DataInputStream(new FileInputStream(objectFile));
          ) {
-            IntLiteralNode node = new IntLiteralNode(in.readInt());
-            Object value = Truffle.getRuntime().createDirectCallNode(new OscarRootNode(node).getCallTarget()).call();
+            Object value = Truffle.getRuntime().createDirectCallNode(
+                  new CommandLineApplicationObject().parse(in)).call();
             System.exit((Integer) value);
          }
       } catch (IOException e) {
