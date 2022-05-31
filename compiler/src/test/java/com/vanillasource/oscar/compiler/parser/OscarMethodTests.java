@@ -14,7 +14,7 @@ public final class OscarMethodTests {
    }
 
    public void testWhitespacesParse() {
-      OscarMethod method = OscarMethod.PARSER.parse(OscarTokenizer.of(OscarInput.of("def m  (   )   =   \n\n   123"))).getOrThrow();
+      OscarMethod method = OscarMethod.PARSER.parse(OscarTokenizer.of(OscarInput.of("def m  (   )   =   \n\n   123   "))).getOrThrow();
 
       assertEquals(method, new OscarMethod("m", 123));
    }

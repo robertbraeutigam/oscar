@@ -33,14 +33,14 @@ public final class OscarTokenizer implements PositionalInput<Token> {
 
    @Override
    public OscarTokenizer next() {
-      if (input.isEof()) {
-         return new OscarTokenizer(input, null);
+      PositionalInput<Character> currentInput = input;
+      // Skip all whitespace
+      while (!currentInput.isEof() && isWhitespace(currentInput.get())) {
+         currentInput = currentInput.next();
+      }
+      if (currentInput.isEof()) {
+         return new OscarTokenizer(currentInput, null);
       } else {
-         PositionalInput<Character> currentInput = input;
-         // Skip all whitespace
-         while (!currentInput.isEof() && isWhitespace(currentInput.get())) {
-            currentInput = currentInput.next();
-         }
          // Choose category and read it
          return TokenCategory.chooseCategory(currentInput.get()).read(currentInput);
       }
