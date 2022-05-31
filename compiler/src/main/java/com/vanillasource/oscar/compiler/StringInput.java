@@ -1,8 +1,6 @@
 package com.vanillasource.oscar.compiler;
 
-import org.typemeta.funcj.parser.Input;
-
-public final class StringInput implements Input<Character> {
+public final class StringInput implements PositionalInput<Character> {
    private final SourceCodePosition position;
    private final String content;
    private final int index;
@@ -28,7 +26,7 @@ public final class StringInput implements Input<Character> {
    }
 
    @Override
-   public Input<Character> next() {
+   public PositionalInput<Character> next() {
       return new StringInput(position.advanceWith(content.charAt(index)), content, index+1);
    }
 

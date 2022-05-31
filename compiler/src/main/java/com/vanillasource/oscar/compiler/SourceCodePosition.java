@@ -17,6 +17,10 @@ public final class SourceCodePosition {
       this(sourceName, 1, 1, false);
    }
 
+   public boolean sameLineAs(SourceCodePosition other) {
+      return line == other.line;
+   }
+
    public SourceCodePosition advanceWith(char c) {
       if (c=='\n' && !previousCharacterWasCarriageReturn ||
           c=='\r' || c=='\u0085' || c=='\u2028' || c=='\u2029') {
