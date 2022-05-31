@@ -67,11 +67,11 @@ public final class Compiler {
                },
                failure -> {
                   if (failure instanceof FailureOnExpected) {
-                     messages.addError(failure.input().position().toString(), "expected "+((FailureOnExpected)failure).expected(), "");
+                     messages.addError(failure.input().get().printStartPosition(), "expected "+((FailureOnExpected)failure).expected(), "");
                   } else if (failure instanceof FailureMessage) {
-                     messages.addError(failure.input().position().toString(), ((FailureMessage)failure).expected(), "");
+                     messages.addError(failure.input().get().printStartPosition(), ((FailureMessage)failure).expected(), "");
                   } else {
-                     messages.addError(failure.input().position().toString(), failure.toString(), "");
+                     messages.addError(failure.input().get().printStartPosition(), failure.toString(), "");
                   }
                });
    }

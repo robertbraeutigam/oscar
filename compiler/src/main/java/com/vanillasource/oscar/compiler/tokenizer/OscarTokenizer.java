@@ -66,7 +66,7 @@ public final class OscarTokenizer implements PositionalInput<Token> {
                builder.append(currentInput.get());
                currentInput = currentInput.next();
             }
-            return new OscarTokenizer(currentInput, new Token(builder.toString()));
+            return new OscarTokenizer(currentInput, new Token(initialInput.position(), builder.toString()));
          }
 
          private boolean isLegal(char c) {
@@ -81,7 +81,7 @@ public final class OscarTokenizer implements PositionalInput<Token> {
 
          @Override
          public OscarTokenizer read(PositionalInput<Character> input) {
-            return new OscarTokenizer(input.next(), new Token(""+input.get()));
+            return new OscarTokenizer(input.next(), new Token(input.position(), ""+input.get()));
          }
       },
       NUMBER {
@@ -98,7 +98,7 @@ public final class OscarTokenizer implements PositionalInput<Token> {
                builder.append(currentInput.get());
                currentInput = currentInput.next();
             }
-            return new OscarTokenizer(currentInput, new Token(builder.toString()));
+            return new OscarTokenizer(currentInput, new Token(initialInput.position(), builder.toString()));
          }
       },
       OTHER {
@@ -108,8 +108,8 @@ public final class OscarTokenizer implements PositionalInput<Token> {
          }
 
          @Override
-         public OscarTokenizer read(PositionalInput<Character> input) {
-            return new OscarTokenizer(input.next(), new Token(""+input.get()));
+         public OscarTokenizer read(PositionalInput<Character> initialInput) {
+            return new OscarTokenizer(initialInput.next(), new Token(initialInput.position(), ""+initialInput.get()));
          }
       }
       ;

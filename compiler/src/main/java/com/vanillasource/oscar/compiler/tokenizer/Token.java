@@ -4,30 +4,23 @@ import org.typemeta.funcj.parser.Parser;
 import static org.typemeta.funcj.parser.Combinators.*;
 import org.typemeta.funcj.parser.Combinators;
 import java.util.function.Predicate;
+import com.vanillasource.oscar.compiler.chars.SourceCodePosition;
 
 public final class Token {
+   private final SourceCodePosition startPosition;
    private final String content;
 
-   public Token(String content) {
+   public Token(SourceCodePosition startPosition, String content) {
+      this.startPosition = startPosition;
       this.content = content;
    }
 
-   @Override
-   public String toString() {
-      return "'"+content+"'";
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if ((o==null)||(!(o instanceof Token))) {
-         return false;
-      }
-      return ((Token)o).content.equals(content);
+   public String printStartPosition() {
+      return startPosition.toString();
    }
 
    public static Parser<Token, String> token(String content) {
-      return value(new Token(content))
-         .map(token -> token.content);
+      return matchingToken(content, str -> str.equals(content));
    }
 
    public static Parser<Token, String> anyToken() {
