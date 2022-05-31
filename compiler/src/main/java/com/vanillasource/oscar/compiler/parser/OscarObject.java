@@ -8,9 +8,11 @@ import org.typemeta.funcj.parser.Parser;
 import java.io.IOException;
 
 public final class OscarObject {
+   public static final Parser<Token, String> OBJECT_NAME = matchingToken("object name",
+         name -> Character.isUpperCase(name.charAt(0))); // Note: all other characters are from category identifier
    public static final Parser<Token, OscarObject> PARSER =
       token("object")
-      .andR(anyToken())
+      .andR(OBJECT_NAME)
       .and(OscarMethod.PARSER.many().between(token("{"), token("}")))
       .map(OscarObject::new);
 

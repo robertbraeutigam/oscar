@@ -7,11 +7,22 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public final class OscarMethod {
+   public static final Parser<Token, String> METHOD_NAME = matchingToken("method name",
+         name -> Character.isLowerCase(name.charAt(0))); // Note: all other characters are from category identifier
+   public static final Parser<Token, Integer> INTEGER = matchingToken("integer",
+         str -> {
+            try {
+               Integer.parseInt(str);
+               return true;
+            } catch (NumberFormatException e) {
+               return false;
+            }
+         }).map(Integer::parseInt);
    public static final Parser<Token, OscarMethod> PARSER =
       token("def")
-      .andR(anyToken())
+      .andR(METHOD_NAME)
       .andL(token("(")).andL(token(")")).andL(token("="))
-      .and(anyNumber())
+      .and(INTEGER)
       .map(OscarMethod::new);
 
    private final String methodName;

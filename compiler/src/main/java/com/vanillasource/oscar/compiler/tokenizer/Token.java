@@ -3,6 +3,7 @@ package com.vanillasource.oscar.compiler.tokenizer;
 import org.typemeta.funcj.parser.Parser;
 import static org.typemeta.funcj.parser.Combinators.*;
 import org.typemeta.funcj.parser.Combinators;
+import java.util.function.Predicate;
 
 public final class Token {
    private final String content;
@@ -34,7 +35,8 @@ public final class Token {
          .map(token -> token.content);
    }
 
-   public static Parser<Token, Integer> anyNumber() {
-      return anyToken().map(Integer::valueOf);
+   public static Parser<Token, String> matchingToken(String name, Predicate<String> condition) {
+      return Combinators.<Token>satisfy(name, token -> condition.test(token.content))
+         .map(token -> token.content);
    }
 }
