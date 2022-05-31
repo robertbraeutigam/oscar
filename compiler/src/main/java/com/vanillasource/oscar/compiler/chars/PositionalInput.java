@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler.lexer;
+package com.vanillasource.oscar.compiler.chars;
 
 import org.typemeta.funcj.parser.Input;
 

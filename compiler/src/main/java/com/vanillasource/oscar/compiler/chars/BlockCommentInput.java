@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler.lexer;
+package com.vanillasource.oscar.compiler.chars;
 
 public final class BlockCommentInput extends DelegatingInput<Character> {
    public BlockCommentInput(PositionalInput<Character> delegate) {

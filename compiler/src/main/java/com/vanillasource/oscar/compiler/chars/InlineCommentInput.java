@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler.lexer;
+package com.vanillasource.oscar.compiler.chars;
 
 public final class InlineCommentInput extends DelegatingInput<Character> {
    public InlineCommentInput(PositionalInput<Character> delegate) {

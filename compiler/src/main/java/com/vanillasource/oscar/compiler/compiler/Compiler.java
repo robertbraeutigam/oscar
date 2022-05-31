@@ -12,7 +12,7 @@ import org.typemeta.funcj.parser.Result.FailureMessage;
 import java.io.DataOutput;
 import java.io.UncheckedIOException;
 import org.typemeta.funcj.data.Chr;
-import com.vanillasource.oscar.compiler.lexer.OscarInput;
+import com.vanillasource.oscar.compiler.chars.OscarInput;
 import com.vanillasource.oscar.compiler.parser.OscarObject;
 
 public final class Compiler {
