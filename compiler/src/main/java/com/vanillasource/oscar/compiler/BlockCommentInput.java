@@ -1,25 +1,13 @@
 package com.vanillasource.oscar.compiler;
 
-public final class BlockCommentInput implements PositionalInput<Character> {
-   private final PositionalInput<Character> delegate;
-
+public final class BlockCommentInput extends DelegatingInput<Character> {
    public BlockCommentInput(PositionalInput<Character> delegate) {
-      this.delegate = delegate;
-   }
-
-   @Override
-   public boolean isEof() {
-      return delegate.isEof();
-   }
-
-   @Override
-   public Character get() {
-      return delegate.get();
+      super(delegate);
    }
 
    @Override
    public PositionalInput<Character> next() {
-      PositionalInput<Character> next = delegate.next();
+      PositionalInput<Character> next = super.next();
       if (!next.isEof() && next.get()=='/') {
          PositionalInput<Character> peek = next.next();
          if (!peek.isEof() && peek.get() == '*') {
@@ -41,10 +29,5 @@ public final class BlockCommentInput implements PositionalInput<Character> {
       } else {
          return new BlockCommentInput(next);
       }
-   }
-
-   @Override
-   public SourceCodePosition position() {
-      return delegate.position();
    }
 }
