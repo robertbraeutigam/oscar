@@ -1,19 +1,17 @@
 package com.vanillasource.oscar.compiler.parser;
 
+import com.vanillasource.oscar.compiler.tokenizer.Token;
+import static com.vanillasource.oscar.compiler.tokenizer.Token.*;
 import org.typemeta.funcj.parser.Parser;
-import static org.typemeta.funcj.parser.Text.*;
-import org.typemeta.funcj.data.Chr;
 import java.io.DataOutput;
 import java.io.IOException;
 
 public final class OscarMethod {
-   public static final Parser<Chr, OscarMethod> PARSER =
-      string("def").andL(ws.many1())
-      .andR(alpha.many1().map(Chr::listToString))
-      .andL(string("(").between(ws.many(), ws.many()))
-      .andL(string(")").between(ws.many(), ws.many()))
-      .andL(string("=").between(ws.many(), ws.many()))
-      .and(intr)
+   public static final Parser<Token, OscarMethod> PARSER =
+      token("def")
+      .andR(anyToken())
+      .andL(token("(")).andL(token(")")).andL(token("="))
+      .and(anyNumber())
       .map(OscarMethod::new);
 
    private final String methodName;

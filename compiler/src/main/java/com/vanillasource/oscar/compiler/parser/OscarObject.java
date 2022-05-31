@@ -1,17 +1,17 @@
 package com.vanillasource.oscar.compiler.parser;
 
+import com.vanillasource.oscar.compiler.tokenizer.Token;
+import static com.vanillasource.oscar.compiler.tokenizer.Token.*;
 import java.io.DataOutput;
 import org.typemeta.funcj.data.IList;
-import static org.typemeta.funcj.parser.Text.*;
-import org.typemeta.funcj.data.Chr;
 import org.typemeta.funcj.parser.Parser;
 import java.io.IOException;
 
 public final class OscarObject {
-   public static final Parser<Chr, OscarObject> PARSER = ws.many().andR(string("object")).andR(ws.many())
-      .andR(alpha.many1().map(Chr::listToString))
-      .and(OscarMethod.PARSER.many()
-            .between(string("{").between(ws.many(), ws.many()), string("}").between(ws.many(), ws.many())))
+   public static final Parser<Token, OscarObject> PARSER =
+      token("object")
+      .andR(anyToken())
+      .and(OscarMethod.PARSER.many().between(token("{"), token("}")))
       .map(OscarObject::new);
 
    private final String objectName;

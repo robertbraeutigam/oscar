@@ -1,9 +1,7 @@
 package com.vanillasource.oscar.compiler.chars;
 
-import org.typemeta.funcj.data.Chr;
-
-public final class OscarInput extends DelegatingInput<Chr> {
-   private OscarInput(PositionalInput<Chr> delegate) {
+public final class OscarInput extends DelegatingInput<Character> {
+   private OscarInput(PositionalInput<Character> delegate) {
       super(delegate);
    }
 
@@ -12,9 +10,9 @@ public final class OscarInput extends DelegatingInput<Chr> {
    }
 
    public static OscarInput of(String source, String content) {
-      return new OscarInput(new MappedInput<>(Chr::valueOf,
+      return new OscarInput(
                new BlockCommentInput(
                   new InlineCommentInput(
-                     new StringInput(source, content)))));
+                     new StringInput(source, content))));
    }
 }
