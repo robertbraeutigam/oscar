@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.compiler;
 
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;

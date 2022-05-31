@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.lexer;
 
 public final class StringInput implements PositionalInput<Character> {
    private final SourceCodePosition position;

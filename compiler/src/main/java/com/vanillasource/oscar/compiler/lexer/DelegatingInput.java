@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.lexer;
 
 public abstract class DelegatingInput<C> implements PositionalInput<C> {
    private final PositionalInput<C> delegate;

@@ -1,7 +1,8 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.parser;
 
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
+import com.vanillasource.oscar.compiler.lexer.OscarInput;
 
 @Test
 public final class OscarMethodTests {

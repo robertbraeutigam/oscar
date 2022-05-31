@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.parser;
 
 import java.io.DataOutput;
 import org.typemeta.funcj.data.IList;

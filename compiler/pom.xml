@@ -28,7 +28,7 @@
                   <configuration>
                      <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                           <mainClass>com.vanillasource.oscar.compiler.Compiler</mainClass>
+                           <mainClass>com.vanillasource.oscar.compiler.compiler.Compiler</mainClass>
                         </transformer>
                      </transformers>
                      <createDependencyReducedPom>false</createDependencyReducedPom>

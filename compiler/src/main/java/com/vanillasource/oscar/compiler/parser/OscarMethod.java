@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.parser;
 
 import org.typemeta.funcj.parser.Parser;
 import static org.typemeta.funcj.parser.Text.*;

@@ -1,4 +1,4 @@
-package com.vanillasource.oscar.compiler;
+package com.vanillasource.oscar.compiler.compiler;
 
 import java.io.File;
 import java.io.FileReader;
@@ -12,6 +12,8 @@ import org.typemeta.funcj.parser.Result.FailureMessage;
 import java.io.DataOutput;
 import java.io.UncheckedIOException;
 import org.typemeta.funcj.data.Chr;
+import com.vanillasource.oscar.compiler.lexer.OscarInput;
+import com.vanillasource.oscar.compiler.parser.OscarObject;
 
 public final class Compiler {
    public static final void main(String[] args) {
