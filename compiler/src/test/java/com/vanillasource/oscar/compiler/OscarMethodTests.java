@@ -17,8 +17,20 @@ public final class OscarMethodTests {
       assertEquals(method, new OscarMethod("m", 123));
    }
 
-   public void testInlineCommentsParse() {
+   public void testInlineCommentsGetRemoved() {
       OscarMethod method = OscarMethod.PARSER.parse(OscarInput.of("def m  (   )   = // This is an inline comment  \n\n   123")).getOrThrow();
+
+      assertEquals(method, new OscarMethod("m", 123));
+   }
+
+   public void testBlockCommentsGetRemoved() {
+      OscarMethod method = OscarMethod.PARSER.parse(OscarInput.of("def m  (   )   = /* Block comment */   123")).getOrThrow();
+
+      assertEquals(method, new OscarMethod("m", 123));
+   }
+
+   public void testBlockCommentsCanBeMultiline() {
+      OscarMethod method = OscarMethod.PARSER.parse(OscarInput.of("def m  (   )   = /* Block \n comment \n */   123")).getOrThrow();
 
       assertEquals(method, new OscarMethod("m", 123));
    }

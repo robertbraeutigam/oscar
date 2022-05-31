@@ -14,8 +14,10 @@ public final class OscarInput implements PositionalInput<Chr> {
    }
 
    public static OscarInput of(String source, String content) {
-      return new OscarInput(new MappedInput<>(
-            new InlineCommentInput(new StringInput(source, content)), Chr::valueOf));
+      return new OscarInput(new MappedInput<>(Chr::valueOf,
+               new BlockCommentInput(
+                  new InlineCommentInput(
+                     new StringInput(source, content)))));
    }
 
    @Override

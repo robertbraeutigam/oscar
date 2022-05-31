@@ -6,7 +6,7 @@ public final class MappedInput<C, R> implements PositionalInput<R> {
    private final PositionalInput<C> delegate;
    private final Function<C, R> mapper;
 
-   public MappedInput(PositionalInput<C> delegate, Function<C, R> mapper) {
+   public MappedInput(Function<C, R> mapper, PositionalInput<C> delegate) {
       this.delegate = delegate;
       this.mapper = mapper;
    }
@@ -23,7 +23,7 @@ public final class MappedInput<C, R> implements PositionalInput<R> {
 
    @Override
    public PositionalInput<R> next() {
-      return new MappedInput<>(delegate.next(), mapper);
+      return new MappedInput<>(mapper, delegate.next());
    }
 
    @Override
